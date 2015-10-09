@@ -13,7 +13,7 @@ func TestRead(t *testing.T) {
 		"format":      "png",
 		"bounds":      "-180,-85.0511,180,85.0511",
 	}
-	mbt := CreateMBT("resources/world_countries.mbtiles")
+	mbt := ReadMBTiles("resources/world_countries.mbtiles")
 	ts := mbt.ts
 	if ts.Name() != meta["name"] {
 		t.Errorf("Getter Error with %s", meta)
@@ -40,4 +40,5 @@ func TestRead(t *testing.T) {
 			t.Errorf("Getter Error with %s", meta)
 		}
 	}
+	t := mbt.ReadTile(z, x, y)
 }

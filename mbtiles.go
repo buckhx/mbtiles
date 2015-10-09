@@ -9,8 +9,14 @@ type MBTiles struct {
 	ts *Tileset
 }
 
-func CreateMBT(path string) *MBTiles {
+func ReadMBTiles(path string) *MBTiles {
 	db := Connect(path)
-	ts := GetTileset(db)
+	ts := ReadTileset(db)
 	return &MBTiles{db, ts}
+}
+
+func (mbt *MBTiles) ReadTile(x, y, z int) (tile *Tile) {
+	tile = &Tile{z, x, y}
+	ReadTile(tile, mbt.db)
+	return
 }
