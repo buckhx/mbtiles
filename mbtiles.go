@@ -5,8 +5,8 @@ import (
 )
 
 type MBTiles struct {
-	db sql.DB
-	ts Tileset
+	db *sql.DB
+	ts *Tileset
 }
 
 func CreateMBT(path string) *MBTiles {

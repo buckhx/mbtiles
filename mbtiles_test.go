@@ -4,17 +4,17 @@ import (
 	"testing"
 )
 
-func TestGetters(t *testing.T) {
+func TestRead(t *testing.T) {
 	meta := map[string]string{
-		"name":        "test-name",
-		"type":        "test-type",
-		"version":     "v0.0.0-test",
-		"description": "test description",
-		"format":      "test-format",
-		"bounds":      "-179.231086,-14.601813000000002,179.859681,71.441059",
-		"attribution": "test attribution @ CC ™ ®",
+		"name":        "cache",
+		"type":        "overlay",
+		"version":     "1",
+		"description": "some info here",
+		"format":      "png",
+		"bounds":      "-180,-85.0511,180,85.0511",
 	}
-	ts := &Tileset{meta}
+	mbt := CreateMBT("resources/world_countries.mbtiles")
+	ts := mbt.ts
 	if ts.Name() != meta["name"] {
 		t.Errorf("Getter Error with %s", meta)
 	}
@@ -30,7 +30,7 @@ func TestGetters(t *testing.T) {
 	if ts.Format() != meta["format"] {
 		t.Errorf("Getter Error with %s", meta)
 	}
-	if ts.Attribution() != meta["attribution"] {
+	if ts.Attribution() != "" {
 		t.Errorf("Getter Error with %s", meta)
 	}
 	bnds, err := ts.Bounds()

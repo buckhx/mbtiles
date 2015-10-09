@@ -13,17 +13,17 @@ func check(err error) {
 	}
 }
 
-func Connect(path string) sql.DB {
+func Connect(path string) *sql.DB {
 	db, err := sql.Open("sqlite3", path)
 	check(err)
 	return db
 }
 
-func GetTileset(db sql.DB) *Tileset {
+func GetTileset(db *sql.DB) *Tileset {
 	rows, err := db.Query("select name, value from metadata")
 	check(err)
 	defer rows.Close()
-	metadata = make(map[string]string)
+	metadata := make(map[string]string)
 	for rows.Next() {
 		var name, value string
 		rows.Scan(&name, &value)
