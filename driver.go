@@ -20,17 +20,17 @@ func dBConnect(path string) *sql.DB {
 	return db
 }
 
-func dBReadTileset(db *sql.DB) *Tileset {
+func dBReadMetadata(db *sql.DB) *Metadata {
 	rows, err := db.Query("select name, value from metadata")
 	check(err)
 	defer rows.Close()
-	metadata := make(map[string]string)
+	attrs := make(map[string]string)
 	for rows.Next() {
 		var name, value string
 		rows.Scan(&name, &value)
-		metadata[name] = value
+		attrs[name] = value
 	}
-	return &Tileset{metadata}
+	return &Metadata{attrs}
 }
 
 func dBReadTile(tile *Tile, db *sql.DB) *Tile {
