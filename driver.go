@@ -3,24 +3,24 @@ package mbtiles
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func check(err error) {
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
+		//log.Fatal(err)
 	}
 }
 
-func Connect(path string) *sql.DB {
+func dBConnect(path string) *sql.DB {
 	db, err := sql.Open("sqlite3", path)
 	check(err)
 	return db
 }
 
-func ReadTileset(db *sql.DB) *Tileset {
+func dBReadTileset(db *sql.DB) *Tileset {
 	rows, err := db.Query("select name, value from metadata")
 	check(err)
 	defer rows.Close()
@@ -33,12 +33,12 @@ func ReadTileset(db *sql.DB) *Tileset {
 	return &Tileset{metadata}
 }
 
-func ReadTile(tile *Tile, db *sql.DB) (tile *Tile) {
+func dBReadTile(tile *Tile, db *sql.DB) *Tile {
 	q := fmt.Sprintf("select tile_data from tiles where zoom_level=%d and tile_column=%d and tile_row=%d", tile.z, tile.x, tile.y)
-	row, err := db.QueryRow(q)
-	check(err)
+	row := db.QueryRow(q)
 	var blob []byte
-	rows.Scan(blob)
+	err := row.Scan(&blob)
+	check(err)
 	tile.data = blob
-	return
+	return tile
 }

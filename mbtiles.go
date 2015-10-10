@@ -10,13 +10,13 @@ type MBTiles struct {
 }
 
 func ReadMBTiles(path string) *MBTiles {
-	db := Connect(path)
-	ts := ReadTileset(db)
+	db := dBConnect(path)
+	ts := dBReadTileset(db)
 	return &MBTiles{db, ts}
 }
 
 func (mbt *MBTiles) ReadTile(x, y, z int) (tile *Tile) {
-	tile = &Tile{z, x, y}
-	ReadTile(tile, mbt.db)
+	tile = EmptyTile(z, x, y)
+	dBReadTile(tile, mbt.db)
 	return
 }

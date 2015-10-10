@@ -40,7 +40,7 @@ func TestRead(t *testing.T) {
 			t.Errorf("Getter Error with %s", meta)
 		}
 	}
-	tile := mbt.ReadTile(z, x, y)
+	tile := mbt.ReadTile(0, 0, 0)
 	if tile.z != 0 {
 		t.Errorf("Bad tile %s", tile)
 	}
