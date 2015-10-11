@@ -33,12 +33,12 @@ func dBReadMetadata(db *sql.DB) *Metadata {
 	return &Metadata{attrs}
 }
 
-func dBReadTile(tile *Tile, db *sql.DB) *Tile {
-	q := fmt.Sprintf("select tile_data from tiles where zoom_level=%d and tile_column=%d and tile_row=%d", tile.z, tile.x, tile.y)
+func dBReadTile(tile *Tile, db *sql.DB) {
+	stmt := "select tile_data from tiles where zoom_level=%d and tile_column=%d and tile_row=%d"
+	q := fmt.Sprintf(stmt, tile.Z, tile.X, tile.Y)
 	row := db.QueryRow(q)
 	var blob []byte
 	err := row.Scan(&blob)
 	check(err)
-	tile.data = blob
-	return tile
+	tile.Data = blob
 }

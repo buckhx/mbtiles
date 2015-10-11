@@ -41,7 +41,7 @@ func TestRead(t *testing.T) {
 		}
 	}
 	tile := ts.ReadTile(0, 0, 0)
-	if tile.z != 0 {
+	if tile.Z != 0 {
 		t.Errorf("Bad tile %s", tile)
 	}
 }

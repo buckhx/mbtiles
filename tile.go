@@ -1,15 +1,15 @@
 package mbtiles
 
 type Tile struct {
-	z, x, y int
-	data    []byte
+	Z, X, Y int
+	Data    []byte
 }
 
 func EmptyTile(z, x, y int) (tile *Tile) {
 	tile = new(Tile)
-	tile.x = x
-	tile.y = y
-	tile.z = z
+	tile.X = x
+	tile.Y = y
+	tile.Z = z
 	return
 	//return &Tile{z, x, y}
 }

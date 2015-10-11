@@ -21,6 +21,14 @@ func (ts *Tileset) ReadTile(x, y, z int) (tile *Tile) {
 	return
 }
 
+// MBTiles use SW origin(0,0), SlippyMaps use NW
+// See: http://gis.stackexchange.com/questions/116288/mbtiles-and-slippymap-tilenames
+func (ts *Tileset) ReadSlippyTile(x, y, z int) (tile *Tile) {
+	y = (1<<uint(z) - 1) - y
+	tile = ts.ReadTile(x, y, z)
+	return
+}
+
 func (ts *Tileset) Metadata() *Metadata {
 	return ts.m
 }
