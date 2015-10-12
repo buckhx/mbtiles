@@ -14,15 +14,17 @@ func check(err error) {
 	}
 }
 
-func dBConnect(path string) *sql.DB {
-	db, err := sql.Open("sqlite3", path)
-	check(err)
-	return db
+func dBConnect(path string) (db *sql.DB, err error) {
+	db, err = sql.Open("sqlite3", path)
+	return
 }
 
-func dBReadMetadata(db *sql.DB) *Metadata {
+func dBReadMetadata(db *sql.DB) (md *Metadata, err error) {
 	rows, err := db.Query("select name, value from metadata")
-	check(err)
+	if err != nil {
+		md = nil
+		return
+	}
 	defer rows.Close()
 	attrs := make(map[string]string)
 	for rows.Next() {
@@ -30,15 +32,16 @@ func dBReadMetadata(db *sql.DB) *Metadata {
 		rows.Scan(&name, &value)
 		attrs[name] = value
 	}
-	return &Metadata{attrs}
+	md = &Metadata{attrs}
+	return
 }
 
-func dBReadTile(tile *Tile, db *sql.DB) {
+func dBReadTile(tile *Tile, db *sql.DB) (err error) {
 	stmt := "select tile_data from tiles where zoom_level=%d and tile_column=%d and tile_row=%d"
 	q := fmt.Sprintf(stmt, tile.Z, tile.X, tile.Y)
 	row := db.QueryRow(q)
 	var blob []byte
-	err := row.Scan(&blob)
-	check(err)
+	err = row.Scan(&blob)
 	tile.Data = blob
+	return
 }

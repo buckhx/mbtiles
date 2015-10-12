@@ -13,7 +13,7 @@ func TestRead(t *testing.T) {
 		"format":      "png",
 		"bounds":      "-180,-85.0511,180,85.0511",
 	}
-	ts := ReadTileset("resources/world_countries.mbtiles")
+	ts, err := ReadTileset("resources/world_countries.mbtiles")
 	m := ts.Metadata()
 	if m.Name() != attrs["name"] {
 		t.Errorf("Getter Error with %s", attrs)
@@ -40,7 +40,8 @@ func TestRead(t *testing.T) {
 			t.Errorf("Getter Error with %s", attrs)
 		}
 	}
-	tile := ts.ReadTile(0, 0, 0)
+	tile, err := ts.ReadTile(0, 0, 0)
+	check(err)
 	if tile.Z != 0 {
 		t.Errorf("Bad tile %s", tile)
 	}
