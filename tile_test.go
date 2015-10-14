@@ -1,6 +1,7 @@
 package mbtiles
 
 import (
+	"crypto/rand"
 	"testing"
 )
 
@@ -10,36 +11,35 @@ func TestSniffType(t *testing.T) {
 		want Format
 	}{
 		{[]byte{}, EMPTY},
-		{[]byte{0x00}, UNKNOWN},
 		{[]byte{0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A}, PNG},
 		{[]byte{0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0xFF, 0xFF}, PNG},
 		{[]byte{0xFF, 0xD8, 0xFF, 0xD9}, JPG},
 		{[]byte{0xFF, 0xD8, 0x00, 0xFF, 0xD9}, JPG},
+		{[]byte{0x47, 0x49, 0x46, 0x38, 0x39, 0x61}, GIF},
+		{[]byte{0x47, 0x49, 0x46, 0x38, 0x37, 0x61, 0x00}, GIF},
+		{[]byte{0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50}, WEBP},
+		{[]byte{0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50, 0x00}, WEBP},
+		{[]byte{0x78, 0x9C}, PBF_DF},
+		{[]byte{0x78, 0x9C, 0x00}, PBF_DF},
+		{[]byte{0x1F, 0x88}, PBF_GZ},
+		{[]byte{0x1F, 0x88, 0x00}, PBF_GZ},
+		{[]byte{0x00}, UNKNOWN},
+		{generateRandomBytes(10), UNKNOWN},
+		// TODO random test
 	}
-	for _, sniff := range sniffs {
-		sniffed := (&Tile{0, 0, 0, sniff.in}).SniffType()
+	for i, sniff := range sniffs {
+		sniffed := (&Tile{0, 0, 0, sniff.in}).SniffFormat()
 		if sniffed != sniff.want {
-			t.Errorf("%s SniffType() wanted %s, got %s", sniff.in, sniff.want, sniffed)
+			t.Errorf("%d SniffFormat() wanted %s, got %s", i, sniff.want, sniffed)
 		}
 	}
 }
 
-/*
-   case len(t.Data) < 2:
-           f = EMPTY
-   case r.DeepEqual(t.Data[:8], []byte{0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A}):
-           f = PNG
-   case r.DeepEqual(t.Data[:2], []byte{0xFF, 0xD8}) && r.DeepEqual(t.Data[len(t.Data)-2:], []byte{0xFF, 0xD9}):
-           f = JPG
-   case r.DeepEqual(t.Data[:4], []byte{0x47, 0x49, 0x46, 0x38}) && (t.Data[4] == 0x39 || t.Data[4] == 0x37) && t.Data[5] == 0x61:
-           f = GIF
-   case r.DeepEqual(t.Data[:4], []byte{0x52, 0x49, 0x46, 0x46}) && r.DeepEqual(t.Data[8:12], []byte{0x57, 0x45, 0x42, 0x50}):
-           f = WEBP
-   case r.DeepEqual(t.Data[:2], []byte{0x78, 0x9C}):
-           f = PBF_DF
-   case r.DeepEqual(t.Data[:2], []byte{0x1F, 0x88}):
-           f = PBF_GZ
-   default:
-           f = UNKNOWN
-   }
-*/
+func generateRandomBytes(n int) []byte {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+	if err != nil {
+		panic(err)
+	}
+	return b
+}

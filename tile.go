@@ -26,7 +26,7 @@ func EmptyTile(z, x, y int) (tile *Tile) {
 	return &Tile{Z: z, X: x, Y: y}
 }
 
-func (t *Tile) SniffType() (f Format) {
+func (t *Tile) SniffFormat() (f Format) {
 	switch {
 	case len(t.Data) < 1:
 		f = EMPTY
