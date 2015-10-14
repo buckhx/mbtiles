@@ -36,7 +36,7 @@ func (t *Tile) SniffFormat() (f Format) {
 		f = JPG
 	case len(t.Data) >= 6 && r.DeepEqual(t.Data[:4], []byte{0x47, 0x49, 0x46, 0x38}) && (t.Data[4] == 0x39 || t.Data[4] == 0x37) && t.Data[5] == 0x61:
 		f = GIF
-	case len(t.Data) >= 13 && r.DeepEqual(t.Data[:4], []byte{0x52, 0x49, 0x46, 0x46}) && r.DeepEqual(t.Data[8:12], []byte{0x57, 0x45, 0x42, 0x50}):
+	case len(t.Data) >= 12 && r.DeepEqual(t.Data[:4], []byte{0x52, 0x49, 0x46, 0x46}) && r.DeepEqual(t.Data[8:12], []byte{0x57, 0x45, 0x42, 0x50}):
 		f = WEBP
 	case len(t.Data) >= 2 && r.DeepEqual(t.Data[:2], []byte{0x78, 0x9C}):
 		f = PBF_DF

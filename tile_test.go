@@ -25,7 +25,6 @@ func TestSniffType(t *testing.T) {
 		{[]byte{0x1F, 0x88, 0x00}, PBF_GZ},
 		{[]byte{0x00}, UNKNOWN},
 		{generateRandomBytes(10), UNKNOWN},
-		// TODO random test
 	}
 	for i, sniff := range sniffs {
 		sniffed := (&Tile{0, 0, 0, sniff.in}).SniffFormat()
