@@ -40,7 +40,7 @@ func (t *Tile) SniffFormat() (f Format) {
 		f = WEBP
 	case len(t.Data) >= 2 && r.DeepEqual(t.Data[:2], []byte{0x78, 0x9C}):
 		f = PBF_DF
-	case len(t.Data) >= 2 && r.DeepEqual(t.Data[:2], []byte{0x1F, 0x88}):
+	case len(t.Data) >= 2 && r.DeepEqual(t.Data[:2], []byte{0x1F, 0x8B}):
 		f = PBF_GZ
 	default:
 		f = UNKNOWN
