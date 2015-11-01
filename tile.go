@@ -18,8 +18,10 @@ const (
 )
 
 type Tile struct {
-	Z, X, Y int
-	Data    []byte
+	Z    int    `json:"z"`
+	X    int    `json:"x"`
+	Y    int    `json:"y"`
+	Data []byte `json:"data"`
 }
 
 func EmptyTile(z, x, y int) (tile *Tile) {
