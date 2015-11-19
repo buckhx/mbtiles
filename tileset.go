@@ -24,7 +24,11 @@ func ReadTileset(path string) (ts *Tileset, err error) {
 
 func (ts *Tileset) ReadTile(x, y, z int) (tile *Tile, err error) {
 	tile = EmptyTile(z, x, y)
-	err = dBReadTile(tile, ts.db)
+	if err = dBReadTile(tile, ts.db); err == sql.ErrNoRows {
+		// if the row was empty, just keep an empty tile
+		// and don't throw an error
+		err = nil
+	}
 	return
 }
 
