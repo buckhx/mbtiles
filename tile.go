@@ -17,6 +17,7 @@ const (
 	EMPTY   Format = "EMPTY"
 )
 
+// Tiles are meant to follow the TMS standard, but there are methods to Read/Write OSM style tiles in Tileset
 type Tile struct {
 	Z    int    `json:"z"`
 	X    int    `json:"x"`

@@ -51,6 +51,7 @@ func TestRead(t *testing.T) {
 
 func TestWrite(t *testing.T) {
 	test_path := "resources/test.mbtiles"
+	//defer os.Remove(test_path)
 	attrs := map[string]string{
 		"name":        "test",
 		"type":        "overlay",
@@ -63,7 +64,6 @@ func TestWrite(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error initializing tileset %v", err)
 	}
-	defer os.Remove(test_path)
 	if !reflect.DeepEqual(ts.Metadata().attrs, attrs) {
 		t.Errorf("metadata doesn't match %v -> %v", attrs, ts.Metadata().attrs)
 	}
