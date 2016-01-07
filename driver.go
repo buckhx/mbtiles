@@ -64,11 +64,16 @@ func dbInitTileset(path string, metadata *Metadata) (db *sql.DB, err error) {
 		err = fmt.Errorf("Tileset Metadata keyset is missing required keys: %v", MetadataRequiredKeys)
 		return
 	}
+	meta_string := ""
+	for k, v := range metadata.Attributes() {
+		meta_string += fmt.Sprintf(" (%q, %q),", k, v)
+	}
 	creates := []string{
 		"CREATE TABLE metadata (name text, value text)",
 		"CREATE TABLE tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob)",
 		"CREATE TABLE grids (zoom_level integer, tile_column integer, tile_row integer, grid blob)",
 		"CREATE TABLE grid_data (zoom_level integer, tile_column integer, tile_row integer, key_name text, key_json text)",
+		"INSERT INTO metadata (name, value) VALUES " + meta_string[:len(meta_string)-1],
 	}
 	err = dbExecStatements(db, creates...)
 	return

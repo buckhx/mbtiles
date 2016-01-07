@@ -2,6 +2,7 @@ package mbtiles
 
 import (
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -59,9 +60,12 @@ func TestWrite(t *testing.T) {
 		"bounds":      "-180,-85.0511,180,85.0511",
 	}
 	ts, err := InitTileset(test_path, attrs)
-	defer os.Remove(test_path)
 	if err != nil {
 		t.Errorf("Error initializing tileset %v", err)
+	}
+	defer os.Remove(test_path)
+	if !reflect.DeepEqual(ts.Metadata().attrs, attrs) {
+		t.Errorf("metadata doesn't match %v -> %v", attrs, ts.Metadata().attrs)
 	}
 	writeTests := []*Tile{
 		&Tile{0, 0, 0, []byte{1, 2, 3, 4}},
