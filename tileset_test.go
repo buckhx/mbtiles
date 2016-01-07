@@ -51,7 +51,7 @@ func TestRead(t *testing.T) {
 
 func TestWrite(t *testing.T) {
 	test_path := "resources/test.mbtiles"
-	//defer os.Remove(test_path)
+	defer os.Remove(test_path)
 	attrs := map[string]string{
 		"name":        "test",
 		"type":        "overlay",

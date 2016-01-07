@@ -52,7 +52,7 @@ func (ts *Tileset) WriteTile(x, y, z int, data []byte) (tile *Tile, err error) {
 
 //Writes a tile that uses the NW origin like OSM
 func (ts *Tileset) WriteOSMTile(x, y, z int, data []byte) (tile *Tile, err error) {
-	y = (z >> 2) - y - 1
+	y = flipY(y, z)
 	tile = &Tile{X: x, Y: y, Z: z, Data: data}
 	err = dbWriteTile(ts.db, tile)
 	return
@@ -61,7 +61,7 @@ func (ts *Tileset) WriteOSMTile(x, y, z int, data []byte) (tile *Tile, err error
 // TMS use SW origin(0,0), OSM uses Slippy names with NW origin
 // See: http://gis.stackexchange.com/questions/116288/mbtiles-and-slippymap-tilenames
 func (ts *Tileset) ReadOSMTile(x, y, z int) (tile *Tile, err error) {
-	y = (1<<uint(z) - 1) - y
+	y = flipY(y, z)
 	tile, err = ts.ReadTile(x, y, z)
 	return
 }
