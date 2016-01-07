@@ -49,3 +49,7 @@ func (t *Tile) SniffFormat() (f Format) {
 	}
 	return
 }
+
+func (t *Tile) Equals(that *Tile) bool {
+	return r.DeepEqual(t, that)
+}

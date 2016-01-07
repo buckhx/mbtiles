@@ -10,11 +10,11 @@ type Tileset struct {
 }
 
 func ReadTileset(path string) (ts *Tileset, err error) {
-	db, err := dBConnect(path)
+	db, err := dbConnect(path)
 	if err != nil {
 		return
 	}
-	md, err := dBReadMetadata(db)
+	md, err := dbReadMetadata(db)
 	if err != nil {
 		return
 	}
@@ -22,13 +22,31 @@ func ReadTileset(path string) (ts *Tileset, err error) {
 	return
 }
 
+// Creates a NEW, BLANK tileset at the given path
+// metadata is requied to have the following keys: name, type, version, description, format
+func InitTileset(path string, metadata map[string]string) (ts *Tileset, err error) {
+	meta := &Metadata{attrs: metadata}
+	db, err := dbInitTileset(path, meta)
+	if err != nil {
+		return
+	}
+	ts = &Tileset{db: db, m: meta}
+	return
+}
+
 func (ts *Tileset) ReadTile(x, y, z int) (tile *Tile, err error) {
 	tile = EmptyTile(z, x, y)
-	if err = dBReadTile(tile, ts.db); err == sql.ErrNoRows {
+	if err = dbReadTile(ts.db, tile); err == sql.ErrNoRows {
 		// if the row was empty, just keep an empty tile
 		// and don't throw an error
 		err = nil
 	}
+	return
+}
+
+func (ts *Tileset) WriteTile(x, y, z int, data []byte) (tile *Tile, err error) {
+	tile = &Tile{X: x, Y: y, Z: z, Data: data}
+	err = dbWriteTile(ts.db, tile)
 	return
 }
 

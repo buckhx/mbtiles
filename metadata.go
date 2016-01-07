@@ -9,10 +9,12 @@ const (
 	TYPE = "type"
 	VERS = "version"
 	DESC = "description"
-	FMT  = "format"
+	FRMT = "format"
 	BNDS = "bounds"
 	ATTR = "attribution"
 )
+
+var MetadataRequiredKeys = []string{NAME, TYPE, VERS, DESC, FRMT}
 
 type Metadata struct {
 	attrs map[string]string
@@ -40,7 +42,7 @@ func (m *Metadata) Description() string {
 }
 
 func (m *Metadata) Format() string {
-	return m.attrs[FMT]
+	return m.attrs[FRMT]
 }
 
 func (m *Metadata) Bounds() ([4]Coordinate, error) {
@@ -57,4 +59,19 @@ func (m *Metadata) Bounds() ([4]Coordinate, error) {
 
 func (m *Metadata) Attribution() string {
 	return m.attrs[ATTR]
+}
+
+func (m *Metadata) HasRequiredKeys() bool {
+	for _, req := range MetadataRequiredKeys {
+		found := false
+		for key, _ := range m.attrs {
+			if req == key {
+				found = true
+			}
+		}
+		if found == false {
+			return false
+		}
+	}
+	return true
 }

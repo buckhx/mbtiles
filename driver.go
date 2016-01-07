@@ -14,13 +14,13 @@ func check(err error) {
 	}
 }
 
-func dBConnect(path string) (db *sql.DB, err error) {
+func dbConnect(path string) (db *sql.DB, err error) {
 	db, err = sql.Open("sqlite3", path)
 	return
 }
 
-func dBReadMetadata(db *sql.DB) (md *Metadata, err error) {
-	rows, err := db.Query("select name, value from metadata")
+func dbReadMetadata(db *sql.DB) (md *Metadata, err error) {
+	rows, err := db.Query("SELECT name, value FROM metadata")
 	if err != nil {
 		md = nil
 		return
@@ -36,12 +36,50 @@ func dBReadMetadata(db *sql.DB) (md *Metadata, err error) {
 	return
 }
 
-func dBReadTile(tile *Tile, db *sql.DB) (err error) {
-	stmt := "select tile_data from tiles where zoom_level=%d and tile_column=%d and tile_row=%d"
+func dbReadTile(db *sql.DB, tile *Tile) (err error) {
+	stmt := "SELECT tile_data FROM tiles WHERE zoom_level=%d AND tile_column=%d AND tile_row=%d"
 	q := fmt.Sprintf(stmt, tile.Z, tile.X, tile.Y)
 	row := db.QueryRow(q)
 	var blob []byte
 	err = row.Scan(&blob)
 	tile.Data = blob
 	return
+}
+
+func dbWriteTile(db *sql.DB, tile *Tile) (err error) {
+	stmt := "INSERT OR REPLACE INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?)"
+	_, err = db.Exec(stmt, tile.Z, tile.X, tile.Y, tile.Data)
+	return
+}
+
+func dbInitTileset(path string, metadata *Metadata) (db *sql.DB, err error) {
+	if !isPathAvailable(path) {
+		return nil, fmt.Errorf("Path not available to create mbtiles: %s", path)
+	}
+	db, err = dbConnect(path)
+	if err != nil {
+		return
+	}
+	if !metadata.HasRequiredKeys() {
+		err = fmt.Errorf("Tileset Metadata keyset is missing required keys: %v", MetadataRequiredKeys)
+		return
+	}
+	creates := []string{
+		"CREATE TABLE metadata (name text, value text)",
+		"CREATE TABLE tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob)",
+		"CREATE TABLE grids (zoom_level integer, tile_column integer, tile_row integer, grid blob)",
+		"CREATE TABLE grid_data (zoom_level integer, tile_column integer, tile_row integer, key_name text, key_json text)",
+	}
+	err = dbExecStatements(db, creates...)
+	return
+}
+
+func dbExecStatements(db *sql.DB, stmts ...string) error {
+	for _, stmt := range stmts {
+		_, err := db.Exec(stmt)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
